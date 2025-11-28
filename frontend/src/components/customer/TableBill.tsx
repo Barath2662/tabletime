@@ -96,7 +96,7 @@ const TableBill = ({ tableNumber }: TableBillProps) => {
                       <span>{item.menu_items.name}</span>
                     </div>
                     <span className="font-medium">
-                      ${(item.menu_items.price * item.quantity).toFixed(2)}
+                      ₹{(item.menu_items.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
                 ))}
@@ -108,16 +108,16 @@ const TableBill = ({ tableNumber }: TableBillProps) => {
           <div className="space-y-2 pt-4">
             <div className="flex justify-between text-lg">
               <span>Subtotal</span>
-              <span className="font-semibold">${totalAmount.toFixed(2)}</span>
+              <span className="font-semibold">₹{totalAmount.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-muted-foreground">
               <span>Tax (10%)</span>
-              <span>${taxAmount.toFixed(2)}</span>
+              <span>₹{taxAmount.toFixed(2)}</span>
             </div>
             <Separator />
             <div className="flex justify-between text-2xl font-bold pt-2">
               <span>Total</span>
-              <span className="text-primary">${grandTotal.toFixed(2)}</span>
+              <span className="text-primary">₹{grandTotal.toFixed(2)}</span>
             </div>
           </div>
 

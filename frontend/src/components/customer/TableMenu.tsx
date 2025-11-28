@@ -161,7 +161,7 @@ const TableMenu = ({ tableNumber }: TableMenuProps) => {
                         <CardTitle className="flex items-start justify-between gap-2">
                           <span>{item.name}</span>
                           <Badge variant="secondary" className="shrink-0">
-                            ${item.price.toFixed(2)}
+                            ₹{item.price.toFixed(2)}
                           </Badge>
                         </CardTitle>
                         <CardDescription>{item.description}</CardDescription>
@@ -214,7 +214,7 @@ const TableMenu = ({ tableNumber }: TableMenuProps) => {
                   <ShoppingCart className="w-5 h-5" />
                   Cart ({cartItemCount})
                 </span>
-                <span className="text-lg">${cartTotal.toFixed(2)}</span>
+                <span className="text-lg">₹{cartTotal.toFixed(2)}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pb-3">
@@ -265,13 +265,13 @@ const TableMenu = ({ tableNumber }: TableMenuProps) => {
                     <span>
                       {item.name} x{item.quantity}
                     </span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
+                    <span>₹{(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
               <div className="flex justify-between font-bold text-lg mt-3 pt-3 border-t">
                 <span>Total</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>₹{cartTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>

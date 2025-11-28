@@ -105,7 +105,7 @@ const TableOrders = ({ tableNumber }: TableOrdersProps) => {
                   </CardDescription>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-lg">${order.total_amount.toFixed(2)}</div>
+                  <div className="font-bold text-lg">₹{order.total_amount.toFixed(2)}</div>
                 </div>
               </div>
             </CardHeader>
