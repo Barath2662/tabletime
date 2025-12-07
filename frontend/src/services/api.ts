@@ -1,4 +1,44 @@
-const API_BASE_URL = 'https://tabletime-h51q.onrender.com/api';
+import { io, Socket } from 'socket.io-client';
+
+// Backend response typings (minimal fields used by the frontend)
+interface BackendMenuItem {
+  _id: string;
+  name: string;
+  description?: string;
+  price: number;
+  category?: string;
+  image_url?: string | null;
+  available?: boolean;
+}
+
+interface BackendOrderItem {
+  _id?: string;
+  menuItem?: { name?: string; price?: number; category?: string };
+  quantity: number;
+  status?: string;
+  notes?: string | null;
+}
+
+interface BackendOrder {
+  _id: string;
+  customer_name?: string;
+  customer_phone?: string;
+  status?: string;
+  total?: number;
+  createdAt?: string;
+  tableNumber?: number;
+  items?: BackendOrderItem[];
+  table?: { tableNumber?: number };
+}
+
+interface BackendTable {
+  _id: string;
+  tableNumber: number;
+  status?: string;
+}
+
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'https://tabletime-h51q.onrender.com/api';
+const SOCKET_URL = import.meta.env.VITE_WS_URL ?? 'https://tabletime-h51q.onrender.com';
 
 class ApiClient {
   private token: string | null = null;
@@ -55,9 +95,9 @@ class ApiClient {
 
   // Menu Items
   async getMenuItems() {
-    const items = await this.request('/menu-items');
+    const items = (await this.request('/menu-items')) as BackendMenuItem[];
     // Transform MongoDB _id to id for frontend
-    return items.map((item: any) => ({
+    return items.map((item) => ({
       id: item._id,
       name: item.name,
       description: item.description,
@@ -69,9 +109,9 @@ class ApiClient {
   }
 
   async getAvailableMenuItems() {
-    const items = await this.request('/menu-items?available=true');
+    const items = (await this.request('/menu-items?available=true')) as BackendMenuItem[];
     // Transform MongoDB _id to id for frontend
-    return items.map((item: any) => ({
+    return items.map((item) => ({
       id: item._id,
       name: item.name,
       description: item.description,
@@ -84,7 +124,7 @@ class ApiClient {
 
   // Tables
   async getTableByNumber(tableNumber: number) {
-    const table = await this.request(`/tables/${tableNumber}`);
+    const table = (await this.request(`/tables/${tableNumber}`)) as BackendTable;
     // Transform backend response to match frontend expectations
     return {
       id: table._id,
@@ -121,10 +161,10 @@ class ApiClient {
 
   async getOrders(filters?: { status?: string; table_id?: string }) {
     const params = new URLSearchParams(filters as Record<string, string>);
-    const orders = await this.request(`/orders?${params}`);
+    const orders = (await this.request(`/orders?${params}`)) as BackendOrder[];
     
     // Transform MongoDB response to match frontend expectations
-    return orders.map((order: any) => ({
+    return orders.map((order) => ({
       id: order._id,
       customer_name: order.customer_name,
       customer_phone: order.customer_phone,
@@ -134,7 +174,7 @@ class ApiClient {
       tables: {
         table_number: order.tableNumber || order.table?.tableNumber || 0
       },
-      order_items: (order.items || []).map((item: any, index: number) => ({
+      order_items: (order.items || []).map((item: BackendOrderItem | undefined, index: number) => ({
         id: item._id || `${order._id}-item-${index}`,
         quantity: item.quantity,
         status: item.status || 'pending',
@@ -149,10 +189,10 @@ class ApiClient {
   }
 
   async getOrdersByTable(tableId: string) {
-    const orders = await this.request(`/orders?table_id=${tableId}`);
+    const orders = (await this.request(`/orders?table_id=${tableId}`)) as BackendOrder[];
     
     // Transform MongoDB response to match frontend expectations
-    return orders.map((order: any) => ({
+    return orders.map((order) => ({
       id: order._id,
       customer_name: order.customer_name,
       customer_phone: order.customer_phone,
@@ -162,7 +202,7 @@ class ApiClient {
       tables: {
         table_number: order.tableNumber || order.table?.tableNumber || 0
       },
-      order_items: (order.items || []).map((item: any, index: number) => ({
+      order_items: (order.items || []).map((item: BackendOrderItem | undefined, index: number) => ({
         id: item._id || `${order._id}-item-${index}`,
         quantity: item.quantity,
         status: item.status || 'pending',
@@ -177,10 +217,10 @@ class ApiClient {
   }
 
   async getOrdersByTableNumber(tableNumber: number) {
-    const orders = await this.request(`/orders/table/${tableNumber}`);
+    const orders = (await this.request(`/orders/table/${tableNumber}`)) as BackendOrder[];
     
     // Transform MongoDB response to match frontend expectations
-    return orders.map((order: any) => ({
+    return orders.map((order) => ({
       id: order._id,
       customer_name: order.customer_name,
       customer_phone: order.customer_phone,
@@ -190,7 +230,7 @@ class ApiClient {
       tables: {
         table_number: order.tableNumber || 0
       },
-      order_items: (order.items || []).map((item: any, index: number) => ({
+      order_items: (order.items || []).map((item: BackendOrderItem | undefined, index: number) => ({
         id: item._id || `${order._id}-item-${index}`,
         quantity: item.quantity,
         status: item.status || 'pending',
@@ -228,9 +268,12 @@ class ApiClient {
     });
   }
 
-  // WebSocket for real-time updates
-  createWebSocket() {
-    return new WebSocket('ws://localhost:5000');
+  // WebSocket for real-time updates (socket.io)
+  createWebSocket(): Socket {
+    return io(SOCKET_URL, {
+      transports: ['websocket'],
+      path: '/socket.io'
+    });
   }
 }
 

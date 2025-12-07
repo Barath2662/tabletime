@@ -157,6 +157,11 @@ Create a `.env.local` file in the `frontend` directory:
 ```
 VITE_API_URL=http://localhost:5000
 ```
+For production (Vercel frontend + Render backend), set the following env vars in the Vercel project settings:
+```
+# VITE_API_URL=https://tabletime-h51q.onrender.com/api
+# VITE_WS_URL=https://tabletime-h51q.onrender.com
+```
 
 ### Running the Application
 

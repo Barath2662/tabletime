@@ -122,9 +122,9 @@ const TableMenu = ({ tableNumber }: TableMenuProps) => {
       setCustomerName("");
       setCustomerPhone("");
       setShowCheckout(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error placing order:", error);
-      const errorMessage = error.message || "Failed to place order. Please try again.";
+      const errorMessage = (error as Error).message || "Failed to place order. Please try again.";
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);

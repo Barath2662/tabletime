@@ -38,17 +38,12 @@ const Admin = () => {
   useEffect(() => {
     fetchOrders();
 
-    const ws = apiClient.createWebSocket();
-    
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'order_update') {
-        fetchOrders();
-      }
-    };
+    const socket = apiClient.createWebSocket();
+    socket.on('order_update', () => fetchOrders());
 
     return () => {
-      ws.close();
+      socket.off('order_update');
+      socket.disconnect();
     };
   }, []);
 

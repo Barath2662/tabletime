@@ -18,7 +18,13 @@ const server = http.createServer(app);
 initWebSocket(server);
 
 // Middleware
-app.use(cors());
+// Allow list of FRONTEND_URL values (comma-separated) for CORS in production; fall back to default dev origins
+const rawOrigins = process.env.FRONTEND_URL || 'https://tabletime-msc.vercel.app,http://localhost:8080';
+const origins = rawOrigins
+  .split(',')
+  .map((s) => s.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+app.use(cors({ origin: origins.length ? origins : true }));
 app.use(helmet());
 app.use(express.json());
 
@@ -46,7 +52,7 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/restau
 mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB');
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 5010;
     server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

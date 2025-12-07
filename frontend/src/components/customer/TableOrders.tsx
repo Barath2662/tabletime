@@ -42,18 +42,15 @@ const TableOrders = ({ tableNumber }: TableOrdersProps) => {
   useEffect(() => {
     fetchOrders();
     
-    // Set up WebSocket for real-time updates
-    const ws = apiClient.createWebSocket();
-    
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'order_update' || data.type === 'order_item_update') {
-        fetchOrders();
-      }
-    };
+    // Set up socket.io client for real-time updates
+    const socket = apiClient.createWebSocket();
+    socket.on('order_update', () => fetchOrders());
+    socket.on('order_item_update', () => fetchOrders());
 
     return () => {
-      ws.close();
+      socket.off('order_update');
+      socket.off('order_item_update');
+      socket.disconnect();
     };
   }, [tableNumber]);
 
