@@ -33,11 +33,9 @@ const Index = () => {
               </p>
               <div className="grid grid-cols-5 gap-2">
                 {[1, 2, 3, 4, 5].map((num) => (
-                  <Link key={num} to={`/table/${num}`}>
-                    <Button variant="outline" className="w-full">
-                      {num}
-                    </Button>
-                  </Link>
+                  <Button asChild key={num} variant="outline" className="w-full">
+                    <Link to={`/table/${num}`}>{num}</Link>
+                  </Button>
                 ))}
               </div>
             </CardContent>
@@ -54,13 +52,11 @@ const Index = () => {
                   View and manage incoming orders from all tables
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <Link to="/login">
-                  <Button className="w-full bg-blue-500 hover:bg-blue-600">
-                    Staff Login - Kitchen
+                <CardContent>
+                  <Button asChild className="w-full bg-blue-500 hover:bg-blue-600">
+                    <Link to="/login">Staff Login - Kitchen</Link>
                   </Button>
-                </Link>
-              </CardContent>
+                </CardContent>
             </Card>
 
             <Card className="hover:shadow-xl transition-shadow border-2">
@@ -74,11 +70,9 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link to="/login">
-                  <Button variant="secondary" className="w-full">
-                    Staff Login - Server
-                  </Button>
-                </Link>
+                <Button asChild variant="secondary" className="w-full">
+                  <Link to="/login">Staff Login - Server</Link>
+                </Button>
               </CardContent>
             </Card>
 
@@ -93,11 +87,9 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link to="/login">
-                  <Button variant="outline" className="w-full border-accent text-accent hover:bg-accent hover:text-accent-foreground">
-                    Staff Login - Admin
-                  </Button>
-                </Link>
+                <Button asChild variant="outline" className="w-full border-accent text-accent hover:bg-accent hover:text-accent-foreground">
+                  <Link to="/login">Staff Login - Admin</Link>
+                </Button>
               </CardContent>
             </Card>
           </div>
