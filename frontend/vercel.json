@@ -1,12 +1,19 @@
 {
   "builds": [
-    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://tabletime-h51q.onrender.com/api/$1" }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "https://tabletime-h51q.onrender.com/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    {
+      "source": "/api/:match*",
+      "destination": "https://tabletime-h51q.onrender.com/api/:match*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/"
+    }
   ]
 }
